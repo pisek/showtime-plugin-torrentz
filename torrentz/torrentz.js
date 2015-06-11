@@ -69,7 +69,7 @@
         var sizeText = sizeT;
 		if (size[1] == 'MB') {	//only MB and GB available
 			if (size[0] > 2048) {
-				sizeText = colorStr('It is almost IMPOSSIBLE to watch this movie in streaming mode (avg. dur. 120min = 7200seconds; '+size[0]+size[1]+' / 7200s = '+(size[0]/7200)+size[1]+'/s ! )', red);
+				sizeText = colorStr('It is almost IMPOSSIBLE to watch this movie in streaming mode\n(avg. dur. 120min = 7200seconds; '+size[0]+size[1]+' / 7200s = '+(Math.round((size[0]/7200) * 1000) / 1000)+size[1]+'/s constantly ! )', red);
 			} else if ((size[0] < 2048) && (size[0] > 1024)) {
 				sizeText = colorStr('There might be some buffering time - better have faster internet connection', yellow);
 			} else {
@@ -105,10 +105,10 @@
 	                description: new showtime.RichText(
 	                	colorStr('Seeds: ', orange) + colorStr(match[7], green) +
 	                	colorStr(' Peers: ', orange) + colorStr(match[8], red) +
-	                	colorStr(' Verified: ', orange) + match[3] +
+	                	colorStr('\nSize: ', orange) + match[6] +
+	                	colorStr(' Verified by: ', orange) + match[3] + ' people' +
 	                	colorStr('\nDate Uploaded: ', orange) + match[4] +
-	                	colorStr(' ('+match[5]+')', blue) +
-	                	colorStr('\nSize: ', orange) + match[6],
+	                	colorStr(' ('+match[5]+' ago)', blue) +
 	                	colorStr('\nStatus: ', orange) + statusText
 	                )
                 });
