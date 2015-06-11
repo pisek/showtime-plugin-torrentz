@@ -1,9 +1,9 @@
 {
-	"description": "<p>Torrentz - Here you will hava an opportunity to search an watch any kind of movie or series on Movian<p>For additional info, visit <a href=\"https://torrentz.eu\">https://torrentz.eu</a>",
+	"description": "<p>Torrentz - Here you will have an opportunity to search and watch any kind of movie or series on Movian using a search engine Torrentz.eu<p>For additional info, visit <a href=\"https://torrentz.eu\">https://torrentz.eu</a>",
 	"author": "pisek", 
-	"homepage": "https://github.com/pisek/showtime-plugins",
+	"homepage": "https://github.com/pisek/showtime-plugin-torrentz",
 	"title": "Torrentz",
-	"synopsis": "Torrentz - Here you will hava an opportunity to search an watch any kind of movie or series on Movian",
+	"synopsis": "Torrentz - stream every torrent!",
 	"version": "0.0.1",
     "file": "torrentz.js",
 	"showtimeVersion": "4.8",
