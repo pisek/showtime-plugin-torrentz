@@ -1,5 +1,5 @@
 /**
- *  torrentz plugin for Movian based on great yts.re plugin by lprot
+ *  torrentz plugin for Movian
  *
  *  Copyright (C) 2015 Pisek
  *
@@ -17,8 +17,6 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-
-//var XML = require('showtime/xml');
 
 (function(plugin) {
     var PREFIX = 'torrentz';
@@ -85,12 +83,12 @@
                 page.appendItem('torrent:browse:http://torcache.net/torrent/'+match[1]+'.torrent', 'video', {
 	                title: new showtime.RichText(match[2]),
 	                description: new showtime.RichText(
-	                		colorStr('Seeds: ', orange) + colorStr(match[7], green) +
-	                		colorStr(' Peers: ', orange) + colorStr(match[8], red) +
-	                		colorStr(' Verified: ', orange) + match[3] +
-	                		colorStr('\nDate Uploaded: ', orange) + match[4] +
-	                		colorStr(' ('+match[5]+')', blue) +
-	                		colorStr('\nSize: ', orange) + match[6]
+	                	colorStr('Seeds: ', orange) + colorStr(match[7], green) +
+	                	colorStr(' Peers: ', orange) + colorStr(match[8], red) +
+	                	colorStr(' Verified: ', orange) + match[3] +
+	                	colorStr('\nDate Uploaded: ', orange) + match[4] +
+	                	colorStr(' ('+match[5]+')', blue) +
+	                	colorStr('\nSize: ', orange) + match[6]
 	                )
                 });
                 
