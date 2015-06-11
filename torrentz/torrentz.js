@@ -18,11 +18,12 @@
  *  
  */
 
+
 (function(plugin) {
     var PREFIX = 'torrentz';
     var logo = plugin.path + "logo.png";
     
-    var blue = '6699CC', orange = 'FFA500', red = 'EE0000', green = '008B45';
+    var blue = '6699CC', orange = 'FFA500', red = 'EE0000', green = '008B45', yellow = 'FFFF00';
 
     function colorStr(str, color) {
         return '<font color="' + color + '">' + str + '</font>';
@@ -42,8 +43,8 @@
 
     var settings = plugin.createSettings(plugin.getDescriptor().id, logo, plugin.getDescriptor().synopsis);
 
-/*    settings.createMultiOpt('torrentCacheUrl', "Which torrent cache system to use:", [
-        ['http://torcache.net/torrent/', 'torcache.net', true],
+	/*settings.createMultiOpt('torrentCacheUrl', "Which torrent cache system to use:", [
+        [{prefix: 'http://torcache.net/torrent/', suffix: '.torrent'}, 'torcache.net', true],
         ], function(v) {
             service.torrentCacheUrl = v;
     	}
@@ -53,7 +54,7 @@
         ['search', 'Peers', true],
         ['searchA', 'Date'],
         ['searchN', 'Rating'],
-        ['searchS', 'Size'],
+        ['searchS', 'Size']
         ], function(v) {
             service.sorting = v;
     	}
@@ -61,6 +62,23 @@
 
 	function d(c) {
 		print(JSON.stringify(c, null, 4));
+	}
+	
+	function parseSizeText(sizeT) {
+		var size = sizeT.split(' ');
+        var sizeText = sizeT;
+		if (size[1] == 'MB') {	//only MB and GB available
+			if (size[0] > 2048) {
+				sizeText = colorStr(sizeT, red);
+			} else if ((size[0] < 2048) && (size[0] > 1024)) {
+				sizeText = colorStr(sizeT, yellow);
+			} else {
+				sizeText = colorStr(sizeT, green);
+			}
+		} else {
+			sizeText = colorStr(sizeT, red);
+		}
+		return sizeText;
 	}
 
     function browseItems(page, search) {
@@ -79,6 +97,8 @@
             var match = pattern.exec(c);
             while ((match = pattern.exec(c)) !== null) {
             	
+            	var sizeText = parseSizeText(match[6]);
+            	
             	//'magnet:?xt=urn:btih:'+match[1]
                 page.appendItem('torrent:browse:http://torcache.net/torrent/'+match[1]+'.torrent', 'video', {
 	                title: new showtime.RichText(match[2]),
@@ -88,7 +108,7 @@
 	                	colorStr(' Verified: ', orange) + match[3] +
 	                	colorStr('\nDate Uploaded: ', orange) + match[4] +
 	                	colorStr(' ('+match[5]+')', blue) +
-	                	colorStr('\nSize: ', orange) + match[6]
+	                	colorStr('\nSize: ', orange) + sizeText
 	                )
                 });
                 
