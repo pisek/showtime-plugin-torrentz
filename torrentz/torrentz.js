@@ -76,7 +76,7 @@
 				sizeText = colorStr('The movie should work OK on standatr internet connection', green);
 			}
 		} else {
-			sizeText = colorStr(sizeT, red);
+			sizeText = colorStr('The movie should work OK on standatr internet connection', green);
 		}
 		return sizeText;
 	}
