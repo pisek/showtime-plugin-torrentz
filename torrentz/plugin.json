@@ -1,0 +1,14 @@
+{
+	"description": "<p>Torrentz - Here you will hava an opportunity to search an watch any kind of movie or series on Movian<p>For additional info, visit <a href=\"https://torrentz.eu\">https://torrentz.eu</a>",
+	"author": "pisek", 
+	"homepage": "https://github.com/pisek/showtime-plugins",
+	"title": "Torrentz",
+	"synopsis": "Torrentz - Here you will hava an opportunity to search an watch any kind of movie or series on Movian",
+	"version": "0.0.1",
+    "file": "torrentz.js",
+	"showtimeVersion": "4.8",
+	"type": "ecmascript",
+	"id": "torrentz",
+	"icon": "logo.png",
+	"category": "video"
+}
