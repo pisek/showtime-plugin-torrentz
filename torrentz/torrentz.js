@@ -64,16 +64,16 @@
 		print(JSON.stringify(c, null, 4));
 	}
 	
-	function parseSizeText(sizeT) {
+	function generateStatusText(sizeT) {
 		var size = sizeT.split(' ');
         var sizeText = sizeT;
 		if (size[1] == 'MB') {	//only MB and GB available
 			if (size[0] > 2048) {
-				sizeText = colorStr(sizeT, red);
+				sizeText = colorStr('It is almost IMPOSSIBLE to watch this movie in streaming mode (avg. dur. 120min = 7200seconds; '+size[0]+size[1]+' / 7200s = '+(size[0]/7200)+size[1]+'/s ! )', red);
 			} else if ((size[0] < 2048) && (size[0] > 1024)) {
-				sizeText = colorStr(sizeT, yellow);
+				sizeText = colorStr('There might be some buffering time - better have faster internet connection', yellow);
 			} else {
-				sizeText = colorStr(sizeT, green);
+				sizeText = colorStr('The movie should work OK on standatr internet connection', green);
 			}
 		} else {
 			sizeText = colorStr(sizeT, red);
@@ -97,7 +97,7 @@
             var match = pattern.exec(c);
             while ((match = pattern.exec(c)) !== null) {
             	
-            	var sizeText = parseSizeText(match[6]);
+            	var statusText = generateStatusText(match[6]);
             	
             	//'magnet:?xt=urn:btih:'+match[1]
                 page.appendItem('torrent:browse:http://torcache.net/torrent/'+match[1]+'.torrent', 'video', {
@@ -108,7 +108,8 @@
 	                	colorStr(' Verified: ', orange) + match[3] +
 	                	colorStr('\nDate Uploaded: ', orange) + match[4] +
 	                	colorStr(' ('+match[5]+')', blue) +
-	                	colorStr('\nSize: ', orange) + sizeText
+	                	colorStr('\nSize: ', orange) + match[6],
+	                	colorStr('\nStatus: ', orange) + statusText
 	                )
                 });
                 
