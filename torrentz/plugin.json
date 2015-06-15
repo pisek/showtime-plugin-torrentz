@@ -4,7 +4,7 @@
 	"homepage": "https://github.com/pisek/showtime-plugin-torrentz",
 	"title": "Torrentz",
 	"synopsis": "Torrentz - stream every torrent!",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"file": "torrentz.js",
 	"showtimeVersion": "4.9.46",
 	"type": "ecmascript",
