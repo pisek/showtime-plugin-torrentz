@@ -43,13 +43,6 @@
 
     var settings = plugin.createSettings(plugin.getDescriptor().id, logo, plugin.getDescriptor().synopsis);
 
-	/*settings.createMultiOpt('torrentCacheUrl', "Which torrent cache system to use:", [
-        [{prefix: 'http://torcache.net/torrent/', suffix: '.torrent'}, 'torcache.net', true],
-        ], function(v) {
-            service.torrentCacheUrl = v;
-    	}
-    );*/
-
     settings.createMultiOpt('sorting', "Sort results by", [
         ['search', 'Peers', true],
         ['searchA', 'Date'],
@@ -57,6 +50,14 @@
         ['searchS', 'Size']
         ], function(v) {
             service.sorting = v;
+    	}
+    );
+    
+    settings.createMultiOpt('torrentDownloadUrl', "Get torrent files from", [
+        [["magnet:?xt=urn:btih:", "&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=http%3A%2F%2Ftracker.trackerfix.com%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker4.piratux.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.blackunicorn.xyz%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce&tr=http%3A%2F%2Ftracker.aletorrenty.pl%3A2710%2Fannounce&tr=udp%3A%2F%2Ftracker.pomf.se%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.com%3A1337&tr=udp%3A%2F%2F9.rarbg.me%3A2710%2Fannounce&tr=http%3A%2F%2Ftorrent.gresille.org%2Fannounce&tr=udp%3A%2F%2Fglotorrents.pw%3A6969%2Fannounce&tr=udp%3A%2F%2Feddie4.nl%3A6969%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A2710%2Fannounce&tr=http%3A%2F%2Ftracker.pubt.net%3A2710%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.istole.it%3A80&tr=udp%3A%2F%2Ftracker.publicbt.com%3A80&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=http%3A%2F%2Ftracker.yify-torrents.com%2Fannounce"], 'Magnet links', true],
+        [["torrent:browse:http://torcache.net/torrent/", ".torrent"], 'Torcache.net'],
+        ], function(v) {
+            service.torrentDownloadUrl = v;
     	}
     );
 
@@ -89,7 +90,7 @@
         var pattern = /<dl><dt><a href="\/(\S+?)">(.*?)<\/a> &#187;.*?<\/dt><dd><span class="v" .*?>(\d+?)<\/span><span class="a"><span title="(.*?)">(.*?)<\/span><\/span><span class="s">(.*?)<\/span>.*?<span class="u">(.*?)<\/span><span class="d">(.*?)<\/span><\/dd><\/dl>/igm;
 
         //number of pages
-        var pagesPattern = />(\d+)<\/a><a href="\/.*?">Next &raquo;<\/a>/im;
+        var pagesPattern = />(\d+)<\/a>\s*?<a href="\/\S*?">Next &raquo;<\/a>/im;
         var maxPages = null;
         
         function loader() {
@@ -114,8 +115,7 @@
             	
             	var statusText = generateStatusText(match[6]);
             	
-            	//'magnet:?xt=urn:btih:'+match[1]
-                page.appendItem('torrent:browse:http://torcache.net/torrent/'+match[1]+'.torrent', 'video', {
+                page.appendItem(service.torrentDownloadUrl[0] + match[1] + service.torrentDownloadUrl[1], 'video', {
 	                title: new showtime.RichText(match[2]),
 	                description: new showtime.RichText(
 	                	colorStr('Seeds: ', orange) + colorStr(match[7], green) +
