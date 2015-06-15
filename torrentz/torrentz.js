@@ -82,19 +82,34 @@
 	}
 
     function browseItems(page, search) {
-        var offset = 0;
+        var pageNumber = 0;
         page.entries = 0;
+
+        //1 - btih, 2 - name, 3 - verified, 4 - add-date, 5 - old, 6 - size, 7 - seeds, 8 - peers
+        var pattern = /<dl><dt><a href="\/(\S+?)">(.*?)<\/a> &#187;.*?<\/dt><dd><span class="v" .*?>(\d+?)<\/span><span class="a"><span title="(.*?)">(.*?)<\/span><\/span><span class="s">(.*?)<\/span>.*?<span class="u">(.*?)<\/span><span class="d">(.*?)<\/span><\/dd><\/dl>/igm;
+
+        //number of pages
+        var pagesPattern = />(\d+)<\/a><a href="\/.*?">Next &raquo;<\/a>/im;
+        var maxPages = null;
         
         function loader() {
             page.loading = true;
             
-            var url = 'https://torrentz.eu/'+service.sorting+'?p='+offset+'&f='+ (search ? search : '');
+            var url = 'https://torrentz.eu/'+service.sorting+'?p='+pageNumber+'&f='+ (search ? search.replace(/\s/g, '+') : '');
+            d(url);
             var c = showtime.httpReq(url);
-            
-            //1 - btih, 2 - name, 3 - verified, 4 - add-date, 5 - old, 6 - size, 7 - seeds, 8 - peers
-            var pattern = /<dl><dt><a href="\/(.*?)">(.*?)<\/a> &#187;.*?<\/dt><dd><span class="v" .*?>(\d+?)<\/span><span class="a"><span title="(.*?)">(.*?)<\/span><\/span><span class="s">(.*?)<\/span>.*?<span class="u">(.*?)<\/span><span class="d">(.*?)<\/span><\/dd><\/dl>/igm;
 
-            var match;
+            var match = null;
+            if (maxPages == null) {
+            	match = pagesPattern.exec(c);
+            	if (match != null) {
+            		maxPages = match[1];
+            	} else {
+            		maxPages = 1;
+            	}
+            	d(maxPages);
+            }
+            
             while ((match = pattern.exec(c)) !== null) {
             	
             	var statusText = generateStatusText(match[6]);
@@ -112,14 +127,19 @@
 	                	colorStr('\nStatus: ', orange) + statusText
 	                )
                 });
+                page.entries++;	//for searcher to work
                 
             }
             
             page.loading = false;
+            if (pageNumber == 0 && page.metadata) {	//only for first page - search results
+               page.metadata.title += ' (' + page.entries + ')';
+            }
 
-            offset++;
-            return offset > 200;//max pages for torrentz.eu
+            pageNumber++;
+            return pageNumber < maxPages;	//max pages for torrentz.eu
         }
+        
         loader();
         page.paginator = loader;
         page.loading = false;
