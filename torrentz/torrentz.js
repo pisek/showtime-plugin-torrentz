@@ -94,7 +94,7 @@
             //1 - btih, 2 - name, 3 - verified, 4 - add-date, 5 - old, 6 - size, 7 - seeds, 8 - peers
             var pattern = /<dl><dt><a href="\/(.*?)">(.*?)<\/a> &#187;.*?<\/dt><dd><span class="v" .*?>(\d+?)<\/span><span class="a"><span title="(.*?)">(.*?)<\/span><\/span><span class="s">(.*?)<\/span>.*?<span class="u">(.*?)<\/span><span class="d">(.*?)<\/span><\/dd><\/dl>/igm;
 
-            var match = pattern.exec(c);
+            var match;
             while ((match = pattern.exec(c)) !== null) {
             	
             	var statusText = generateStatusText(match[6]);
