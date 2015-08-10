@@ -69,6 +69,22 @@
         	}
     	}
     );
+    
+    settings.createMultiOpt('torrentzUrl', "Use this torrentz.eu mirror:", [
+        ['https://torrentz.eu', 'https://torrentz.eu', true],
+        ['https://torrentz.com', 'https://torrentz.com'],
+        ['https://torrentz.ph', 'https://torrentz.ph'],
+        ['https://torrentz.li', 'https://torrentz.li'],
+        ['https://torrentz.me', 'https://torrentz.me'],
+        ['https://torrentz.in', 'https://torrentz.in'],
+        ['https://torrentz.hk', 'https://torrentz.hk'],
+        ['https://torrentz.de', 'https://torrentz.de'],
+        ['https://tz.ai', 'https://tz.ai'],
+        ['https://torrentz-proxy.com', 'https://torrentz-proxy.com']
+        ], function(v) {
+            service.torrentzUrl = v;
+    	}
+    );
 
 	function d(c) {
 		print(JSON.stringify(c, null, 4));
@@ -90,6 +106,26 @@
 		}
 		return sizeText;
 	}
+	
+	function getIMDBinfo(title) {
+		return showtime.JSONDecode(showtime.httpReq("http://www.imdb.com/xml/find?json=1&nr=1&tt=on&q=" + encodeURIComponent(showtime.entityDecode(unescape(title))).toString()));
+	}
+	
+	function isIrrelevantWord(word) {
+		//TODO
+	}
+	
+	function getOnlyMovieTitle(title) {
+		var c = title.split(" ");
+		var t = "";
+		for (var i = 0; i < c.length; i++) {
+			if (isIrrelevantWord(c[i])) {
+				break;
+			}
+			t += c[i] + " ";
+		}
+		return t;
+	}
 
     function browseItems(page, search) {
         var pageNumber = 0;
@@ -105,7 +141,7 @@
         function loader() {
             page.loading = true;
             
-            var url = 'https://torrentz.eu/'+service.sorting+'?p='+pageNumber+'&f='+ (search ? search.replace(/\s/g, '+') : '');
+            var url = service.torrentzUrl + '/'+service.sorting+'?p='+pageNumber+'&f='+ (search ? search.replace(/\s/g, '+') : '');
             d(url);
             var c = showtime.httpReq(url);
 
@@ -122,9 +158,11 @@
             
             while ((match = pattern.exec(c)) !== null) {
             	
+            	//var imdb = getIMDBinfo(getOnlyMovieTitle(match[2]));
+            	
             	var statusText = generateStatusText(match[6]);
             	
-                page.appendItem(service.urlPrefix + match[1] + service.urlSuffix, 'video', {
+                var item = page.appendItem(service.urlPrefix + match[1] + service.urlSuffix, 'video', {
 	                title: new showtime.RichText(match[2]),
 	                description: new showtime.RichText(
 	                	colorStr('Seeds: ', orange) + colorStr(match[7], green) +
@@ -153,7 +191,7 @@
         page.paginator = loader;
         page.loading = false;
     }
-
+    
     plugin.addURI(PREFIX + ":start", function(page) {
         setPageHeader(page, plugin.getDescriptor().synopsis);
         
