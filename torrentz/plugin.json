@@ -1,5 +1,5 @@
 {
-	"description": "<p>Torrentz - Here you will have an opportunity to search and watch any kind of movie/series, music and pictures on Movian using a search engine Torrentz.eu</p><p>For additional info, visit <a href=\"https://torrentz.eu\">https://torrentz.eu</a>",
+	"description": "<p>Torrentz - Here you will have an opportunity to search and watch any kind of movie/series, music and pictures on Movian using a search engine Torrentz.eu</p><p>For searching please use Movian's main search field.</p><p>More info at <a href=\"https://github.com/pisek/showtime-plugin-torrentz\">https://github.com/pisek/showtime-plugin-torrentz</a> and <a href=\"https://torrentz.eu\">https://torrentz.eu</a>",
 	"author": "pisek", 
 	"homepage": "https://github.com/pisek/showtime-plugin-torrentz",
 	"title": "Torrentz",
