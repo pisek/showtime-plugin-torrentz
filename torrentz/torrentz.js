@@ -20,8 +20,9 @@
 
 
 (function(plugin) {
-    var PREFIX = 'torrentz';
-    var logo = plugin.path + "logo.png";
+    var PREFIX = plugin.getDescriptor().id;
+    var LOGO = plugin.path + "logo.png";
+    var BACKGROUND = plugin.path + "views/img/background.png";
     
     var blue = '6699CC', orange = 'FFA500', red = 'EE0000', green = '008B45', yellow = 'FFFF00';
 
@@ -29,19 +30,23 @@
         return '<font color="' + color + '">' + str + '</font>';
     }
 
-    function setPageHeader(page, title) {
+    function setPageHeader(page, title, image) {
         if (page.metadata) {
             page.metadata.title = title;
-            page.metadata.logo = logo;
+            page.metadata.logo = LOGO;
+            if (image) {
+            	page.metadata.background = image;
+            	page.metadata.backgroundAlpha = 0.3;
+            } else {
+            	page.metadata.background = BACKGROUND;
+            	page.metadata.backgroundAlpha = 0.7;
+            }
         }
-        page.type = "directory";
-        page.contents = "items";
-        page.loading = true;
     }
 
-    var service = plugin.createService(plugin.getDescriptor().id, PREFIX + ":start", "video", true, logo);
+    var service = plugin.createService(plugin.getDescriptor().title, PREFIX + ":start", "video", true, LOGO);
 
-    var settings = plugin.createSettings(plugin.getDescriptor().id, logo, plugin.getDescriptor().synopsis);
+    var settings = plugin.createSettings(plugin.getDescriptor().title, LOGO, plugin.getDescriptor().synopsis);
 
     settings.createMultiOpt('sorting', "Sort results by", [
         ['search', 'Peers', true],
@@ -126,9 +131,25 @@
 		}
 		return t;
 	}
+	
+	function resolveSortByString(sorting) {
+		switch (sorting) {
+		case 'searchA':
+			return "Date";
+		case 'searchN':
+			return "Rating";
+		case 'searchS':
+			return "Size";
+		default:
+			return "Peers";
+		}
+	}
 
     function browseItems(page, search) {
-        var pageNumber = 0;
+		page.type = "directory";
+        page.contents = "items";
+    	
+    	var pageNumber = 0;
         page.entries = 0;
 
         //1 - btih, 2 - name, 3 - verified, 4 - add-date, 5 - old, 6 - size, 7 - seeds, 8 - peers
@@ -179,8 +200,12 @@
             }
             
             page.loading = false;
-            if (pageNumber == 0 && page.metadata) {	//only for first page - search results
-               page.metadata.title += ' (' + page.entries + ')';
+			if (pageNumber == 0 && page.metadata) {	//only for first page - search results
+               page.metadata.title += ' (' + page.entries;
+               if (page.entries == 48) {
+	               page.metadata.title += '+';
+               }
+               page.metadata.title += ')';
             }
 
             pageNumber++;
@@ -189,21 +214,20 @@
         
         loader();
         page.paginator = loader;
-        page.loading = false;
     }
     
     plugin.addURI(PREFIX + ":start", function(page) {
         setPageHeader(page, plugin.getDescriptor().synopsis);
         
+        var sortedByString = resolveSortByString(service.sorting);
+        
         page.appendItem("", "separator", {
-            title: 'All'
+            title: 'Sorted by: '+sortedByString
         });
         browseItems(page);
-
-        page.loading = false;
     });
-
-    plugin.addSearcher(plugin.getDescriptor().id, logo, function(page, search) {
+    
+    plugin.addSearcher(plugin.getDescriptor().title, LOGO, function(page, search) {
         browseItems(page, search);
     });
 })(this);
