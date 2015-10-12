@@ -146,8 +146,8 @@
 	}
 
     function browseItems(page, search) {
-		page.type = "directory";
-        page.contents = "items";
+        page.type = "directory";
+        page.contents = "movies";
     	
     	var pageNumber = 0;
         page.entries = 0;
