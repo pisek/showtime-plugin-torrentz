@@ -22,7 +22,7 @@
 (function(plugin) {
     var PREFIX = plugin.getDescriptor().id;
     var LOGO = plugin.path + "logo.png";
-    var BACKGROUND = plugin.path + "views/img/background.png";
+    var BACKGROUND = plugin.path + "views/img/background.jpg";
     
     var blue = '6699CC', orange = 'FFA500', red = 'EE0000', green = '008B45', yellow = 'FFFF00';
 
