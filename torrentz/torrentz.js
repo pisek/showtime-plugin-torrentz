@@ -77,22 +77,12 @@
     	}
     );
     
-    settings.createMultiOpt('torrentzUrl', "Use this torrentz.eu mirror:",
-		[
-	        ['https://torrentz.eu', 'https://torrentz.eu', true],
-	        ['https://torrentz.com', 'https://torrentz.com'],
-	        ['https://torrentz.ph', 'https://torrentz.ph'],
-	        ['https://torrentz.li', 'https://torrentz.li'],
-	        ['https://torrentz.me', 'https://torrentz.me'],
-	        ['https://torrentz.in', 'https://torrentz.in'],
-	        ['https://torrentz.hk', 'https://torrentz.hk'],
-	        ['https://torrentz.de', 'https://torrentz.de'],
-	        ['https://tz.ai', 'https://tz.ai'],
-	        ['https://torrentz-proxy.com', 'https://torrentz-proxy.com']
-        ], function(v) {
+	settings.createString('torrentzUrl', "Use this torrentz.eu mirror:",
+		"https://torrentz2.eu",
+		function(v) {
             service.torrentzUrl = v;
     	}
-    );
+	);
     
     settings.createBool('useTransmission', "Use external Transmission service to download the torrent", false,
     	function(v) {
