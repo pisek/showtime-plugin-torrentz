@@ -48,19 +48,21 @@
 
     var settings = plugin.createSettings(plugin.getDescriptor().title, LOGO, plugin.getDescriptor().synopsis);
 
-    settings.createMultiOpt('sorting', "Sort results by", [
-        ['search', 'Peers', true],
-        ['searchA', 'Date'],
-        ['searchN', 'Rating'],
-        ['searchS', 'Size']
+    settings.createMultiOpt('sorting', "Sort results by",
+    	[
+	        ['search', 'Peers', true],
+	        ['searchA', 'Date'],
+	        ['searchN', 'Rating'],
+	        ['searchS', 'Size']
         ], function(v) {
             service.sorting = v;
     	}
     );
     
-    settings.createMultiOpt('torrentDownloadUrl', "Get torrent files from", [
-        ['magnet', 'Magnet links', true],
-        ['torcache', 'Torcache.net']
+    settings.createMultiOpt('torrentDownloadUrl', "Get torrent files from",
+		[
+	        ['magnet', 'Magnet links', true],
+	        ['torcache', 'Torcache.net']
         ], function(v) {
         	switch (v) {
         		case 'magnet':
@@ -75,21 +77,35 @@
     	}
     );
     
-    settings.createMultiOpt('torrentzUrl', "Use this torrentz.eu mirror:", [
-        ['https://torrentz.eu', 'https://torrentz.eu', true],
-        ['https://torrentz.com', 'https://torrentz.com'],
-        ['https://torrentz.ph', 'https://torrentz.ph'],
-        ['https://torrentz.li', 'https://torrentz.li'],
-        ['https://torrentz.me', 'https://torrentz.me'],
-        ['https://torrentz.in', 'https://torrentz.in'],
-        ['https://torrentz.hk', 'https://torrentz.hk'],
-        ['https://torrentz.de', 'https://torrentz.de'],
-        ['https://tz.ai', 'https://tz.ai'],
-        ['https://torrentz-proxy.com', 'https://torrentz-proxy.com']
+    settings.createMultiOpt('torrentzUrl', "Use this torrentz.eu mirror:",
+		[
+	        ['https://torrentz.eu', 'https://torrentz.eu', true],
+	        ['https://torrentz.com', 'https://torrentz.com'],
+	        ['https://torrentz.ph', 'https://torrentz.ph'],
+	        ['https://torrentz.li', 'https://torrentz.li'],
+	        ['https://torrentz.me', 'https://torrentz.me'],
+	        ['https://torrentz.in', 'https://torrentz.in'],
+	        ['https://torrentz.hk', 'https://torrentz.hk'],
+	        ['https://torrentz.de', 'https://torrentz.de'],
+	        ['https://tz.ai', 'https://tz.ai'],
+	        ['https://torrentz-proxy.com', 'https://torrentz-proxy.com']
         ], function(v) {
             service.torrentzUrl = v;
     	}
     );
+    
+    settings.createBool('useTransmission', "Use external Transmission service to download the torrent", false,
+    	function(v) {
+            service.useTransmission = v;
+    	}
+	);
+	
+	settings.createString('transmissionUrl', "External Transmission service url (no auth!)", 
+		"http://192.168.0.1:9091/transmission/rpc/",
+		function(v) {
+            service.transmissionUrl = v;
+    	}
+	);
 
 	function d(c) {
 		print(JSON.stringify(c, null, 4));
@@ -112,7 +128,7 @@
 		return sizeText;
 	}
 	
-	function getIMDBinfo(title) {
+/*	function getIMDBinfo(title) {
 		return showtime.JSONDecode(showtime.httpReq("http://www.imdb.com/xml/find?json=1&nr=1&tt=on&q=" + encodeURIComponent(showtime.entityDecode(unescape(title))).toString()));
 	}
 	
@@ -130,7 +146,7 @@
 			t += c[i] + " ";
 		}
 		return t;
-	}
+	}*/
 	
 	function resolveSortByString(sorting) {
 		switch (sorting) {
@@ -181,9 +197,14 @@
             	
             	//var imdb = getIMDBinfo(getOnlyMovieTitle(match[2]));
             	
+            	var itemUrl = service.urlPrefix + match[1] + service.urlSuffix;
+            	if (service.useTransmission) {
+            		itemUrl = PREFIX + ":open:" + itemUrl;
+            	}
+            	
             	var statusText = generateStatusText(match[6]);
             	
-                var item = page.appendItem(service.urlPrefix + match[1] + service.urlSuffix, 'video', {
+                var item = page.appendItem(itemUrl, 'video', {
 	                title: new showtime.RichText(match[2]),
 	                description: new showtime.RichText(
 	                	colorStr('Seeds: ', orange) + colorStr(match[7], green) +
@@ -225,6 +246,65 @@
             title: 'Sorted by: '+sortedByString
         });
         browseItems(page);
+    });
+    
+    plugin.addURI(PREFIX + ":open:(.*)", function(page, url) {
+        setPageHeader(page, plugin.getDescriptor().synopsis);
+        page.type = "directory";
+        
+        page.appendItem("", "separator", {
+            title: 'Open with:'
+        });
+        
+        page.appendItem(url, "video", {
+            title: 'Movian',
+            description: 'Open torrent in internal client - stream the movie etc.'
+        });
+        page.appendItem(PREFIX + ":transmission:" + url, "video", {
+            title: 'Add to Transmission',
+            description: 'Torrent will be added and started to external transmission service'
+        });
+        
+    });
+    
+    function transmissionTorrentAdd(url) {
+    	
+    	var init = showtime.httpReq(service.transmissionUrl, {noFail: true});
+    	
+    	var c = showtime.httpReq(service.transmissionUrl, {
+    		noFail: true,
+    		headers: {
+				'X-Transmission-Session-Id': init.headers["X-Transmission-Session-Id"]
+			},
+			postdata: showtime.JSONEncode(
+				{
+					"method": "torrent-add",
+					"arguments": {
+						"paused": false,
+						"filename": url
+					}
+				}
+			)
+    	});
+    	
+    	return c.statuscode;
+    	
+    }
+    
+    plugin.addURI(PREFIX + ":transmission:(.*)", function(page, url) {
+        setPageHeader(page, plugin.getDescriptor().synopsis);
+        page.type = "directory";
+        
+        var status = new showtime.RichText(colorStr('OK - torrent added and started on Tranasmission', green));
+        var response = transmissionTorrentAdd(url);
+        if (response != 200) {
+        	status = new showtime.RichText(colorStr('ERROR: Something went wrong! (more info in logs)', red));
+        }
+        
+        page.appendItem("", "separator", {
+            title: status
+        });
+        
     });
     
     plugin.addSearcher(plugin.getDescriptor().title, LOGO, function(page, search) {
