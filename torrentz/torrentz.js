@@ -114,26 +114,6 @@
 		return sizeText;
 	}
 	
-/*	function getIMDBinfo(title) {
-		return showtime.JSONDecode(showtime.httpReq("http://www.imdb.com/xml/find?json=1&nr=1&tt=on&q=" + encodeURIComponent(showtime.entityDecode(unescape(title))).toString()));
-	}
-	
-	function isIrrelevantWord(word) {
-		//TODO
-	}
-	
-	function getOnlyMovieTitle(title) {
-		var c = title.split(" ");
-		var t = "";
-		for (var i = 0; i < c.length; i++) {
-			if (isIrrelevantWord(c[i])) {
-				break;
-			}
-			t += c[i] + " ";
-		}
-		return t;
-	}*/
-	
 	function resolveSortByString(sorting) {
 		switch (sorting) {
 		case 'searchA':
@@ -154,11 +134,11 @@
     	var pageNumber = 0;
         page.entries = 0;
 
-        //1 - btih, 2 - name, 3 - verified, 4 - add-date, 5 - old, 6 - size, 7 - seeds, 8 - peers
-        var pattern = /<dl><dt><a href="\/(\S+?)">(.*?)<\/a> &#187;.*?<\/dt><dd><span class="v" .*?>(\d+?)<\/span><span class="a"><span title="(.*?)">(.*?)<\/span><\/span><span class="s">(.*?)<\/span>.*?<span class="u">(.*?)<\/span><span class="d">(.*?)<\/span><\/dd><\/dl>/igm;
+        //1 - btih, 2 - name, 3 - verified, 4 - old, 5 - size, 6 - seeds, 7 - peers
+        var pattern = /<dl><dt><a href=\/(\S+?)>(.*?)<\/a> &#187;.*?<\/dt><dd><span>(.*?)<\/span><span title=\d*?>(.*?)<\/span><span>(.*?)<\/span><span>([\d,]+?)<\/span><span>([\d,]+?)<\/span>/igm;
 
         //number of pages
-        var pagesPattern = />(\d+)<\/a>\s*?<a href="\/\S*?">Next &raquo;<\/a>/im;
+        var pagesPattern = /<\/span><a href="\/\S*?">Next &rsaquo; <\/a>/img;
         var maxPages = null;
         
         function loader() {
@@ -181,24 +161,21 @@
             
             while ((match = pattern.exec(c)) !== null) {
             	
-            	//var imdb = getIMDBinfo(getOnlyMovieTitle(match[2]));
-            	
             	var itemUrl = service.urlPrefix + match[1] + service.urlSuffix;
             	if (service.useTransmission) {
             		itemUrl = PREFIX + ":open:" + itemUrl;
             	}
             	
-            	var statusText = generateStatusText(match[6]);
+            	var statusText = generateStatusText(match[5]);
             	
                 var item = page.appendItem(itemUrl, 'video', {
 	                title: new showtime.RichText(match[2]),
 	                description: new showtime.RichText(
-	                	colorStr('Seeds: ', orange) + colorStr(match[7], green) +
-	                	colorStr(' Peers: ', orange) + colorStr(match[8], red) +
-	                	colorStr('\nSize: ', orange) + match[6] +
-	                	colorStr(' Verified by: ', orange) + match[3] + ' people' +
-	                	colorStr('\nDate Uploaded: ', orange) + match[4] +
-	                	colorStr(' ('+match[5]+' ago)', blue) +
+	                	colorStr('Seeds: ', orange) + colorStr(match[6], green) +
+	                	colorStr(' Peers: ', orange) + colorStr(match[7], red) +
+	                	colorStr('\nSize: ', orange) + match[5] +
+	                	colorStr(' Verified: ', orange) + match[3] +
+	                	colorStr('\nUploaded: ', orange) + match[4] + ' ago' +
 	                	colorStr('\nStatus: ', orange) + statusText
 	                )
                 });
