@@ -1,5 +1,5 @@
 # showtime-plugin-torrentz
 
-Torrentz - Here you will have an opportunity to search and watch any kind of movie/series, music and pictures on Movian using a search engine Torrentz.eu
+Torrentz plugin written for Movian (old Showtime) application
 
-For additional info, visit https://torrentz.eu
+For additional info, visit https://movian.tv and https://torrentz.eu
