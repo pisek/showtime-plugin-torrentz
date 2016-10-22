@@ -73,8 +73,8 @@
     	}
     );
     
-	settings.createString('torrentzUrl', "Use this torrentz.eu mirror:",
-		"https://torrentz2.eu",
+	settings.createString('torrentzUrl', "Use this torrentz.eu mirror (works with torrent2.eu and torrentzeu.to):",
+		"https://torrentzeu.to",
 		function(v) {
             service.torrentzUrl = v;
     	}
@@ -135,7 +135,7 @@
         page.entries = 0;
 
         //1 - btih, 2 - name, 3 - verified, 4 - old, 5 - size, 6 - seeds, 7 - peers
-        var pattern = /<dl><dt><a href=\/(\S+?)>(.*?)<\/a> &#187;.*?<\/dt><dd><span>(.*?)<\/span><span title=\d*?>(.*?)<\/span><span>(.*?)<\/span><span>([\d,]+?)<\/span><span>([\d,]+?)<\/span>/igm;
+        var pattern = /<dl>\s*?<dt>\s*?<a href=[\"\']?\/(\S+?)[\"\']?\s?>\s*?(.*?)\s*?<\/a>[\S\s]*?<\/dt>\s*?<dd>\s*?<span[\S\s]*?>(.*?)<\/span>\s*?(?:<span[\S\s]*?>)+(.*?)(?:<\/span>)+\s*?<span[\S\s]*?>(.*?)<\/span>\s*?<span[\S\s]*?>([\d\,]+?)<\/span>\s*?<span[\S\s]*?>([\d\,]+?)<\/span>\s*?<\/dd>\s*?<\/dl>/igm;
 
         //number of pages
         var pagesPattern = /<\/span><a href="\/\S*?">Next &rsaquo; <\/a>/img;
@@ -144,7 +144,7 @@
         function loader() {
             page.loading = true;
             
-            var url = service.torrentzUrl + '/'+service.sorting+'?p='+pageNumber+'&f='+ (search ? search.replace(/\s/g, '+') : '');
+            var url = service.torrentzUrl + '/'+service.sorting+'?f='+ (search ? search.replace(/\s/g, '+') : '&p='+pageNumber);
             d(url);
             var c = showtime.httpReq(url);
 
